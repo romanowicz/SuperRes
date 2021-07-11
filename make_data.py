@@ -13,7 +13,7 @@ import cv2
 
 DATA_PATH = r"/home/rpa/DL_Data/ImageNet/imagenetv2"
 OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes"
-MAX_INPUT_FILES = 2
+MAX_INPUT_FILES = 1000
 
 
 def downsample(img):
