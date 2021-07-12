@@ -17,9 +17,8 @@ UPSCALING_FACTOR = 3
 
 
 class SRCNNDataset(Dataset):
-    def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):
-        #self.num_tiles = int(len(glob.glob(img_dir + os.sep + "*.png")) / 2)
-        #self.img_labels = [0] * self.num_tiles
+    def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):        
+        self.num_tiles = int(len(glob.glob(img_dir + os.sep + "*/*.png", recursive=True)) / 2)
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform
