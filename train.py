@@ -26,7 +26,7 @@ p = SRCNN.SRCNNParam()
 out_width = SRCNNDataset.IMG_WIDTH - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
 
 # define custom transform function
-transform = torchvision.transforms.Compose([
+transform = torchvision.transforms.Compose([    
     torchvision.transforms.ToTensor()
 ])
 

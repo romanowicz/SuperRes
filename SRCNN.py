@@ -13,7 +13,7 @@ import torch
         
 class SRCNNParam():
     def __init__(self):
-        self.c = 3
+        self.c = 1
         self.f1 = 9
         self.f2 = 1
         self.f3 = 5
