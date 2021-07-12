@@ -7,27 +7,21 @@ Created on Sun Jul 11 20:48:51 2021
 """
 
 import os
+import shutil
 import glob
+import sys
 
 import torchvision
 
 from PIL import Image, ImageFilter
 
 
-DATA_PATH = r"/home/rpa/DL_Data/ImageNet/imagenetv2"
-
-#OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_1"
-#MAX_INPUT_FILES = 1000
-#STRIDE = 14
-
-OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_2"
-MAX_INPUT_FILES = 400000
-STRIDE = 33
+# number of all files = 499606
+INPUT_DATA_PATH = r"/home/rpa/DL_Data/ImageNet/imagenetv2"
 
 from SRCNNDataset import IMG_WIDTH
 from SRCNNDataset import UPSCALING_FACTOR
 
-# number of all files = 499606
 
 def downsample(img):
     w = img.size[0]
@@ -52,7 +46,7 @@ def extract_tiles(img, sx, sy, stride):
     return tiles
 
 
-def process_image(img_name, index):
+def process_image(img_name, index, output_path, stride):
     img_h = Image.open(img_name);
     img_h_ycbcr = img_h.convert('YCbCr')
     img_h_y, img_h_cb, img_h_cr = img_h_ycbcr.split()
@@ -61,48 +55,66 @@ def process_image(img_name, index):
     img_l_ycbcr = img_l.convert('YCbCr')
     img_l_y, img_l_cb, img_l_cr = img_l_ycbcr.split()
     
-    tiles_h = extract_tiles(img_h_y, IMG_WIDTH, IMG_WIDTH, STRIDE)
-    tiles_l = extract_tiles(img_l_y, IMG_WIDTH, IMG_WIDTH, STRIDE)
+    tiles_h = extract_tiles(img_h_y, IMG_WIDTH, IMG_WIDTH, stride)
+    tiles_l = extract_tiles(img_l_y, IMG_WIDTH, IMG_WIDTH, stride)
 
     for i in range(len(tiles_h)):
         name_h = "tile" + str(index + i) + "h.png"
         name_l = "tile" + str(index + i) + "l.png"
         tile_h = tiles_h[i];
         tile_l = tiles_l[i];
-        tile_h.save(OUTPUT_PATH + os.sep + name_h)
-        tile_l.save(OUTPUT_PATH + os.sep + name_l)
+        
+        dir_idx = int((index + i) / 1000)
+        try:
+            os.mkdir(output_path + os.sep + str(dir_idx))  
+        except IOError:
+            pass   
+        
+        tile_h.save(output_path + os.sep + str(dir_idx) + os.sep + name_h)
+        tile_l.save(output_path + os.sep + str(dir_idx) + os.sep + name_l)
     
     return index + len(tiles_h)
 
 
-# make output dir
-try:
-    os.mkdir(OUTPUT_PATH)
-except IOError:
-    pass    
+def make_dataset(input_data_path, output_data_path, max_files, stride):
 
-# remove existing files in output dir
-for fl in glob.glob(OUTPUT_PATH + os.sep + "*.png"):
-    os.remove(fl)
+    # make empty output directory
+    try:
+        shutil.rmtree(output_data_path)
+    except:
+        pass
+    
+    try:
+        os.mkdir(output_data_path)
+    except IOError:
+        pass        
+    
+    # process number of files
+    index = 0    
+    num_files = 0
+    for fl in glob.glob(input_data_path + os.sep + "*.jpg"):
+        index = process_image(fl, index, output_data_path, stride)
+        num_files = num_files + 1
+        if num_files % 100 == 0 and num_files > 0:
+            print("processed " + str(num_files) + " files")
+        if num_files > max_files:
+            break
+    
+    print("produced " + str(index) + " tiles")
 
-# process number of files
-index = 0
 
-#for i in range(0, MAX_INPUT_FILES):
-#    name = DATA_PATH + os.sep + "train" + str(i) + ".jpg"
-#    print("processing " + "train" + str(i) + ".jpg")
-#    if (os.path.exists(name)):
-#        index = process_image(name, index)
-#    else:
-#        break
+def usage():
+    print("usage: make_data.py <output_data_path> <max_images> <stride>")
+    sys.exit(0)
 
-num_files = 0
-for fl in glob.glob(DATA_PATH + os.sep + "*.jpg"):
-    index = process_image(fl, index)
-    num_files = num_files + 1
-    if num_files % 100 == 0 and num_files > 0:
-        print("processed " + str(num_files) + " files")
-    if num_files > MAX_INPUT_FILES:
-        break
 
-print("produced " + str(index) + " tiles")
+if __name__ == "__main__":
+    if len(sys.argv) != 4:    
+        usage()
+
+    output_data_path = sys.argv[1]
+    num_images = int(sys.argv[2])
+    stride = int(sys.argv[3])
+    
+    make_dataset(INPUT_DATA_PATH, output_data_path, num_images, stride)
+    

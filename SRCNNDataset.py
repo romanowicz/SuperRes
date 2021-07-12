@@ -18,8 +18,8 @@ UPSCALING_FACTOR = 3
 
 class SRCNNDataset(Dataset):
     def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):
-        self.num_tiles = int(len(glob.glob(img_dir + os.sep + "*.png")) / 2)
-        self.img_labels = [0] * self.num_tiles
+        #self.num_tiles = int(len(glob.glob(img_dir + os.sep + "*.png")) / 2)
+        #self.img_labels = [0] * self.num_tiles
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform
@@ -28,8 +28,9 @@ class SRCNNDataset(Dataset):
         return self.num_tiles
 
     def __getitem__(self, idx):
-        img_path_l = os.path.join(self.img_dir, "tile" + str(idx) + "l.png")
-        img_path_h = os.path.join(self.img_dir, "tile" + str(idx) + "h.png")
+        dir_idx = int(idx / 1000)
+        img_path_l = os.path.join(self.img_dir, str(dir_idx), "tile" + str(idx) + "l.png")
+        img_path_h = os.path.join(self.img_dir, str(dir_idx), "tile" + str(idx) + "h.png")
         image_l = Image.open(img_path_l).convert('L');        
         image_h = Image.open(img_path_h).convert('L');        
         if self.transform:
