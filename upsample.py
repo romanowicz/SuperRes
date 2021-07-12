@@ -12,24 +12,29 @@ import torchvision
 from PIL import Image
 
 import SRCNN
-from SRCNNDataset import UPSCALING_FACTOR
+
+
+UPSCALING_FACTOR = 3
 
 
 def usage():
-    print("usage: upsample.py <input_image> <output_image>")
+    print("usage: upsample.py <input_image> <output_image> [model.pt]")
     sys.exit(0)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:    
+    if len(sys.argv) != 3 and len(sys.argv) != 4:    
         usage()
 
     input_image = sys.argv[1]
     output_image = sys.argv[2]
+    model_file = "srcnn.pt"
+    if len(sys.argv) == 4:
+        model_file = sys.argv[3]
         
     # load neural network
     model = SRCNN.SRCNN()
-    model.load_state_dict(torch.load("srcnn.pt"))
+    model.load_state_dict(torch.load(model_file))
     model.eval()
 
     # open and resize image

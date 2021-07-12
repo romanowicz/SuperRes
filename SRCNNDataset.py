@@ -6,12 +6,10 @@ Created on Mon Jul 12 14:08:45 2021
 
 import os
 import glob
-import torch
 
 from PIL import Image
 
 from torch.utils.data import Dataset
-from torchvision.io import read_image
 
 
 IMG_WIDTH = 33

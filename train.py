@@ -15,7 +15,7 @@ import SRCNNDataset
 import SRCNN
 
 
-DATA_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_0"
+DATA_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_1"
 
 batch_size = 64
 
