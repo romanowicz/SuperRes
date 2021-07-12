@@ -19,19 +19,24 @@ DATA_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_0"
 
 batch_size = 64
 
-num_epochs = 10
+num_epochs = 5
 
 
 p = SRCNN.SRCNNParam()
 out_width = SRCNNDataset.IMG_WIDTH - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
 
 # define custom transform function
+transform = torchvision.transforms.Compose([
+    torchvision.transforms.ToTensor()
+])
+
 target_transform = torchvision.transforms.Compose([
+    torchvision.transforms.ToTensor(),
     torchvision.transforms.CenterCrop(out_width)
 ])
 
 # make dataset and loader
-dataset = SRCNNDataset.SRCNNDataset("", DATA_PATH, target_transform=target_transform)
+dataset = SRCNNDataset.SRCNNDataset("", DATA_PATH, transform=transform, target_transform=target_transform)
 train_dataloader = DataLoader(dataset, batch_size=batch_size)
 
 # print info
@@ -53,6 +58,7 @@ for epoch in range(0, num_epochs):
     current_loss = 0.0
     for i, data in enumerate(train_dataloader, 0):        
         inputs, targets = data
+            
         outputs = model(inputs.to(device))
         targets = targets.to(device)
         
@@ -68,4 +74,4 @@ for epoch in range(0, num_epochs):
 print('Training process has finished.')        
   
 # save model
-torch.save(model.state_dict(), "srcnn.pb")
+torch.save(model.state_dict(), "srcnn.pt")

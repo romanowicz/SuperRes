@@ -9,7 +9,6 @@ Created on Mon Jul 12 14:02:10 2021
 
 
 import torch
-from torch import nn
 
         
 class SRCNNParam():
@@ -22,7 +21,7 @@ class SRCNNParam():
         self.n2 = 32
         
     
-class SRCNN(nn.Module):
+class SRCNN(torch.nn.Module):
     def __init__(self):
         super(SRCNN, self).__init__()
         p = SRCNNParam()

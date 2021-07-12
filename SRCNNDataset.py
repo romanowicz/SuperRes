@@ -8,11 +8,14 @@ import os
 import glob
 import torch
 
+from PIL import Image
+
 from torch.utils.data import Dataset
 from torchvision.io import read_image
 
 
 IMG_WIDTH = 33
+UPSCALING_FACTOR = 3
 
 
 class SRCNNDataset(Dataset):
@@ -29,10 +32,8 @@ class SRCNNDataset(Dataset):
     def __getitem__(self, idx):
         img_path_l = os.path.join(self.img_dir, "tile" + str(idx) + "l.png")
         img_path_h = os.path.join(self.img_dir, "tile" + str(idx) + "h.png")
-        image_l = read_image(img_path_l)
-        image_h = read_image(img_path_h)
-        image_l = image_l.type(torch.FloatTensor)
-        image_h = image_h.type(torch.FloatTensor)
+        image_l = Image.open(img_path_l);
+        image_h = Image.open(img_path_h);
         if self.transform:
             image_l = self.transform(image_l)
         if self.target_transform:

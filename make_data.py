@@ -17,16 +17,19 @@ DATA_PATH = r"/home/rpa/DL_Data/ImageNet/imagenetv2"
 #MAX_INPUT_FILES = 1000
 #STRIDE = 14
 
-OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_1"
+OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_2"
 MAX_INPUT_FILES = 400000
 STRIDE = 33
+
+from SRCNNDataset import IMG_WIDTH
+from SRCNNDataset import UPSCALING_FACTOR
 
 # number of all files = 499606
 
 def downsample(img):
     h, w = img.shape[:2]
     img2 = cv2.GaussianBlur(img, (3, 3), 10, 10)
-    img3 = cv2.resize(img2, (int(h/3), int(w/3)))
+    img3 = cv2.resize(img2, (int(h/UPSCALING_FACTOR), int(w/UPSCALING_FACTOR)))
     img4 = cv2.resize(img3, (h, w))
     return img4
 
@@ -45,8 +48,8 @@ def process_image(img_name, index):
     img_h = cv2.imread(img_name)
     img_l = downsample(img_h)
 
-    tiles_h = extract_tiles(img_h, 33, 33, STRIDE)
-    tiles_l = extract_tiles(img_l, 33, 33, STRIDE)
+    tiles_h = extract_tiles(img_h, IMG_WIDTH, IMG_WIDTH, STRIDE)
+    tiles_l = extract_tiles(img_l, IMG_WIDTH, IMG_WIDTH, STRIDE)
 
     for i in range(len(tiles_h)):
         name_h = "tile" + str(index + i) + "h.png"
@@ -68,12 +71,17 @@ for fl in glob.glob(OUTPUT_PATH + os.sep + "*.png"):
 
 # process number of files
 index = 0
-for i in range(0, MAX_INPUT_FILES):
-    name = DATA_PATH + os.sep + "train" + str(i) + ".jpg"
-    print("processing " + "train" + str(i) + ".jpg")
-    if (os.path.exists(name)):
-        index = process_image(name, index)
-    else:
-        break
+
+#for i in range(0, MAX_INPUT_FILES):
+#    name = DATA_PATH + os.sep + "train" + str(i) + ".jpg"
+#    print("processing " + "train" + str(i) + ".jpg")
+#    if (os.path.exists(name)):
+#        index = process_image(name, index)
+#    else:
+#        break
+
+for fl in glob.glob(DATA_PATH + os.sep + "*.jpg"):
+    print("processing " + fl)
+    index = process_image(fl, index)
 
 print("produced " + str(index) + " tiles")
