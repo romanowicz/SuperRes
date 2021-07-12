@@ -41,7 +41,7 @@ if __name__ == "__main__":
     image = Image.open(input_image);
     w = image.size[0]
     h = image.size[1]
-    resize = torchvision.transforms.Resize((h * UPSCALING_FACTOR, w * UPSCALING_FACTOR))
+    resize = torchvision.transforms.Resize((h * UPSCALING_FACTOR, w * UPSCALING_FACTOR), interpolation=torchvision.transforms.functional.InterpolationMode.NEAREST)
     image = resize(image)
     image_ycbcr = image.convert('YCbCr')
     image_y, image_cb, image_cr = image_ycbcr.split()
@@ -52,6 +52,8 @@ if __name__ == "__main__":
     image_t = image_t.unsqueeze(0)
     image_t = model(image_t)
     
+    image_t = image_t / torch.max(image_t)
+    
     # assemble luminance and Cb, Cr channels
     to_image = torchvision.transforms.ToPILImage()
     image_y = to_image(image_t[0])
@@ -59,6 +61,6 @@ if __name__ == "__main__":
     image_ycrcb = Image.merge('YCbCr',(image_y, crop(image_cb), crop(image_cr)))
 
     #convert to RGB and save
-    image = image_ycrcb.convert('RGB')    
+    image = image_ycrcb.convert('RGB')
     image.save(output_image)
         

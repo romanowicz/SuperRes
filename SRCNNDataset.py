@@ -30,14 +30,8 @@ class SRCNNDataset(Dataset):
     def __getitem__(self, idx):
         img_path_l = os.path.join(self.img_dir, "tile" + str(idx) + "l.png")
         img_path_h = os.path.join(self.img_dir, "tile" + str(idx) + "h.png")
-        image_l = Image.open(img_path_l);        
-        image_h = Image.open(img_path_h);
-
-        image_l_ycbcr = image_l.convert('YCbCr')
-        image_h_ycbcr = image_h.convert('YCbCr')
-        image_l, tmp1, tmp2 = image_l_ycbcr.split()
-        image_h, tmp1, tmp2 = image_h_ycbcr.split()
-        
+        image_l = Image.open(img_path_l).convert('L');        
+        image_h = Image.open(img_path_h).convert('L');        
         if self.transform:
             image_l = self.transform(image_l)
         if self.target_transform:
