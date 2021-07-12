@@ -12,9 +12,16 @@ import cv2
 
 
 DATA_PATH = r"/home/rpa/DL_Data/ImageNet/imagenetv2"
-OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes"
-MAX_INPUT_FILES = 1000
 
+#OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_0"
+#MAX_INPUT_FILES = 1000
+#STRIDE = 14
+
+OUTPUT_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_1"
+MAX_INPUT_FILES = 400000
+STRIDE = 33
+
+# number of all files = 499606
 
 def downsample(img):
     h, w = img.shape[:2]
@@ -38,8 +45,8 @@ def process_image(img_name, index):
     img_h = cv2.imread(img_name)
     img_l = downsample(img_h)
 
-    tiles_h = extract_tiles(img_h, 33, 33, 14)
-    tiles_l = extract_tiles(img_l, 33, 33, 14)
+    tiles_h = extract_tiles(img_h, 33, 33, STRIDE)
+    tiles_l = extract_tiles(img_l, 33, 33, STRIDE)
 
     for i in range(len(tiles_h)):
         name_h = "tile" + str(index + i) + "h.png"
@@ -51,6 +58,9 @@ def process_image(img_name, index):
     
     return index + len(tiles_h)
 
+
+# make output dir
+os.mkdir(OUTPUT_PATH)
 
 # remove existing files in output dir
 for fl in glob.glob(OUTPUT_PATH + os.sep + "*.png"):

@@ -15,9 +15,11 @@ import SRCNNDataset
 import SRCNN
 
 
-DATA_PATH = r"/home/rpa/DL_Data/SuperRes"
+DATA_PATH = r"/home/rpa/DL_Data/SuperRes/dataset_0"
 
-batch_size = 128
+batch_size = 64
+
+num_epochs = 10
 
 
 p = SRCNN.SRCNNParam()
@@ -45,9 +47,9 @@ model = SRCNN.SRCNN().to(device)
 print(model)
 
 loss_function = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
 
-for epoch in range(0, 5):
+for epoch in range(0, num_epochs):
     current_loss = 0.0
     for i, data in enumerate(train_dataloader, 0):        
         inputs, targets = data
