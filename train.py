@@ -49,6 +49,8 @@ class CustomImageDataset(Dataset):
         return image_l, image_h
 
 
+# Super Resolution CNN network from
+# "Image Super-Resolution Using Deep Convolutional Networks"
 class SRCNN(nn.Module):
     def __init__(self):
         super(SRCNN, self).__init__()
