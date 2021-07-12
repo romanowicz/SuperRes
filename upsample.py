@@ -5,40 +5,47 @@ Created on Mon Jul 12 14:53:58 2021
 
 @author: rpa
 """
-from PIL import Image
 
+import sys
 import torch
 import torchvision
-from torchvision.io import read_image, write_jpeg
+from PIL import Image
 
 import SRCNN
-from SRCNNDataset import IMG_WIDTH
 from SRCNNDataset import UPSCALING_FACTOR
 
 
-model = SRCNN.SRCNN()
-model.load_state_dict(torch.load("srcnn.pt"))
-model.eval()
+def usage():
+    print("usage: upsample.py <input_image> <output_image>")
+    sys.exit(0)
 
-image = Image.open("train10000.jpg");
 
-w = image.size[0]
-h = image.size[1]
+if __name__ == "__main__":
+    if len(sys.argv) != 3:    
+        usage()
 
-my_transform = torchvision.transforms.Compose([
-    torchvision.transforms.ToTensor(),
-    torchvision.transforms.Resize((h * UPSCALING_FACTOR, w * UPSCALING_FACTOR))
-])
+    input_image = sys.argv[1]
+    output_image = sys.argv[2]
+        
+    model = SRCNN.SRCNN()
+    model.load_state_dict(torch.load("srcnn.pt"))
+    model.eval()
+    
+    image = Image.open(input_image);
+    
+    w = image.size[0]
+    h = image.size[1]
+    
+    my_transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Resize((h * UPSCALING_FACTOR, w * UPSCALING_FACTOR), torchvision.transforms.InterpolationMode.BILINEAR)
+    ])
+    
+    image1 = my_transform(image)
+    image2 = model(image1.unsqueeze(0))    
+    image2 = image2 / torch.max(image2)
 
-image1 = my_transform(image)
-#print(image1.size())
-
-# TODO: convert to tiles tensor of size torch.Size([64, 3, 33, 33])
-
-image2 = model(image1.unsqueeze(0))
-
-m = torchvision.transforms.ToPILImage()
-image3 = m(image2[0])
-
-image3.save("output10000.png","PNG")
-
+    m = torchvision.transforms.ToPILImage()
+    image3 = m(image2[0])
+    image3.save(output_image)
+        
