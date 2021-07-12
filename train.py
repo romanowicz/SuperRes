@@ -12,6 +12,7 @@ import glob
 
 from torch.utils.data import Dataset
 from torchvision.io import read_image
+from torchvision.transforms import ToTensor
 from torch.utils.data import DataLoader
 from torch import nn
 
@@ -42,6 +43,8 @@ class CustomImageDataset(Dataset):
         img_path_h = os.path.join(self.img_dir, "tile" + str(idx) + "h.png")
         image_l = read_image(img_path_l)
         image_h = read_image(img_path_h)
+        image_l = image_l.type(torch.FloatTensor)
+        image_h = image_h.type(torch.FloatTensor)
         if self.transform:
             image_l = self.transform(image_l)
         if self.target_transform:
@@ -51,20 +54,26 @@ class CustomImageDataset(Dataset):
 
 # Super Resolution CNN network from
 # "Image Super-Resolution Using Deep Convolutional Networks"
+        
+class SRCNNParam():
+    def __init__(self):
+        self.c = 3
+        self.f1 = 9
+        self.f2 = 1
+        self.f3 = 5
+        self.n1 = 64
+        self.n2 = 32
+        
+    
 class SRCNN(nn.Module):
     def __init__(self):
         super(SRCNN, self).__init__()
-        c = 3
-        f1 = 9
-        f2 = 1
-        f3 = 5
-        n1 = 64
-        n2 = 32
-        self.conv1 = torch.nn.Conv2d(c, n1, kernel_size=f1, stride=1)
+        p = SRCNNParam()
+        self.conv1 = torch.nn.Conv2d(p.c, p.n1, kernel_size=p.f1, stride=1)
         self.relu1 = torch.nn.ReLU()
-        self.conv2 = torch.nn.Conv2d(n1, n2, kernel_size=f2, stride=1)
+        self.conv2 = torch.nn.Conv2d(p.n1, p.n2, kernel_size=p.f2, stride=1)
         self.relu2 = torch.nn.ReLU()
-        self.conv3 = torch.nn.Conv2d(n2, c, kernel_size=f3, stride=1)
+        self.conv3 = torch.nn.Conv2d(p.n2, p.c, kernel_size=p.f3, stride=1)
 
     def forward(self, x):
         y = self.conv1(x)
@@ -91,4 +100,31 @@ print('Using {} device'.format(device))
 model = SRCNN().to(device)
 print(model)
 
+loss_function = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
+for epoch in range(0, 5):
+    current_loss = 0.0
+    for i, data in enumerate(train_dataloader, 0):        
+        inputs, targets = data
+        outputs = model(inputs.to(device))
+
+        #print("targets shape: " + str(targets.shape))
+        #print("outputs shape: " + str(outputs.shape))        
+        
+        osh = outputs.shape[2:][0]
+        tsh = targets.shape[2:][0]
+        d = int((tsh - osh) / 2)
+        targets=targets[:,:,d:tsh-d,d:tsh-d].to(device)
+        
+        loss = loss_function(outputs, targets)
+        loss.backward()
+        optimizer.step()
+        current_loss += loss.item()
+        if i % 500 == 499:
+          print('Loss after mini-batch %5d: %.3f' %
+                (i + 1, current_loss / 500))
+          current_loss = 0.0
+
+print('Training process has finished.')        
+  
