@@ -22,7 +22,7 @@ batch_size = 128
 num_epochs = 8
 
 
-def train(data_path, model_name):
+def train(data_path, max_images, model_name):
 
     p = SRCNN.SRCNNParam()
     #out_width = SRCNNDataset.TILE_SIZE - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
@@ -40,7 +40,7 @@ def train(data_path, model_name):
     
     # make dataset and loader
     #dataset = SRCNNDataset.SRCNNDataset("", data_path, transform=transform, target_transform=target_transform)
-    dataset = SRCNNDataset2.SRCNNDataset2("", data_path, transform=transform, target_transform=target_transform)
+    dataset = SRCNNDataset2.SRCNNDataset2("", data_path, max_images=max_images, transform=transform, target_transform=target_transform)
     train_dataloader = DataLoader(dataset, batch_size=batch_size)
     
     # print info
@@ -82,15 +82,16 @@ def train(data_path, model_name):
 
 
 def usage():
-    print("usage: train.py <data_path> <model_name>")
+    print("usage: train.py <data_path> <max_images> <model_name>")
     sys.exit(0)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:    
+    if len(sys.argv) != 4:    
         usage()
         
     data_path = sys.argv[1]
-    model_name= sys.argv[2]
+    max_images = int(sys.argv[2])
+    model_name= sys.argv[3]
     
-    train(data_path, model_name)
+    train(data_path, max_images, model_name)

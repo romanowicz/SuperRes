@@ -41,8 +41,12 @@ class SRCNNDataset2(Dataset):
         return num
 
 
-    def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):        
+    def __init__(self, annotations_file, img_dir, max_images=None, transform=None, target_transform=None):        
         self.file_list = glob.glob(img_dir + os.sep + "*.jpg")
+        if max_images is not None and max_images > 0:
+            m = min(max_images, len(self.file_list))
+            self.file_list = self.file_list[:m]
+
         self.img_dir = img_dir
         self.tiles_x = self.tilesPerImage(IMG_SIZE_X, TILE_SIZE, STRIDE)
         self.tiles_y = self.tilesPerImage(IMG_SIZE_Y, TILE_SIZE, STRIDE)
