@@ -82,7 +82,7 @@ class SRCNNDataset2(Dataset):
 
             img_l_rgb = self.downsample(img_h_rgb)
             img_l_ycbcr = img_l_rgb.convert('YCbCr')
-            self. img_l, img_l_cb, img_l_cr = img_l_ycbcr.split()
+            self.img_l, img_l_cb, img_l_cr = img_l_ycbcr.split()
             
             self.img_idx = img_idx_curr
                 

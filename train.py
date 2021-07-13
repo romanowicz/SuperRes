@@ -85,14 +85,18 @@ def train(data_path, max_images, model_name):
             epoch_items = epoch_items + 1
             
             if i % 500 == 499:
-              print("   -> Loss after mini-batch %5d: %.4f" %
+              print("   -> Loss after mini-batch %5d: %.5f" %
                     (i + 1, current_loss / 500))
               current_loss = 0.0
           
         epoch_loss = epoch_loss / epoch_items
         improvement = prev_epoch_loss / epoch_loss
-        print("Epoch loss        : %.4f" % epoch_loss)
-        print("Epoch improvement : %.4f" % improvement)
+        print("Epoch loss        : %.5f" % epoch_loss)
+        print("Epoch improvement : %.3f" % improvement)
+
+        # save model after epoch
+        model_name_epoch = "model_" + str(epoch) + ".pt"
+        torch.save(current_state, model_name_epoch)
 
         # less than 3% improvement, terminating
         if improvement < 1.03:
