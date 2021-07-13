@@ -21,7 +21,7 @@ IMG_SIZE_Y = 192
 UPSCALING_FACTOR = 3
 
 
-class SRCNNDataset2(Dataset):
+class SRCNNDataset(Dataset):
 
     def downsample(self, img):
         w = img.size[0]

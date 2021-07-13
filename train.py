@@ -13,7 +13,7 @@ import torchvision
 from torch.utils.data import DataLoader
 from torch import nn
 
-import SRCNNDataset2
+import SRCNNDataset
 import SRCNN
 
 
@@ -24,7 +24,7 @@ num_epochs = 10
 def train(data_path, max_images, model_name):
 
     p = SRCNN.SRCNNParam()
-    out_width = SRCNNDataset2.TILE_SIZE - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
+    out_width = SRCNNDataset.TILE_SIZE - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
     
     # define custom transform function
     transform = torchvision.transforms.Compose([    
@@ -37,7 +37,7 @@ def train(data_path, max_images, model_name):
     ])
     
     # make dataset and loader
-    dataset = SRCNNDataset2.SRCNNDataset2("", data_path, max_images=max_images, transform=transform, target_transform=target_transform)
+    dataset = SRCNNDataset.SRCNNDataset("", data_path, max_images=max_images, transform=transform, target_transform=target_transform)
     train_dataloader = DataLoader(dataset, batch_size=batch_size)
     
     # print info
@@ -92,7 +92,8 @@ def train(data_path, max_images, model_name):
         epoch_loss = epoch_loss / epoch_items
         improvement = prev_epoch_loss / epoch_loss
         print("Epoch loss        : %.5f" % epoch_loss)
-        print("Epoch improvement : %.3f" % improvement)
+        if epoch > 0:
+            print("Epoch improvement : %.3f" % improvement)
 
         # save model after epoch
         model_name_epoch = "model_" + str(epoch) + ".pt"
