@@ -1,7 +1,7 @@
 """
 Created on Mon Jul 12 14:08:45 2021
 
-@author: rpa
+@author: Roman Parys (romanowicz@protonmail.ch)
 """
 
 import os

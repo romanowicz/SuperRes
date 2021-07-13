@@ -3,7 +3,7 @@
 """
 Created on Sun Jul 11 22:06:56 2021
 
-@author: rpa
+@author: Roman Parys (romanowicz@protonmail.ch)
 """
 
 import sys

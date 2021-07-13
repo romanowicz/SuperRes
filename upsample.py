@@ -3,7 +3,7 @@
 """
 Created on Mon Jul 12 14:53:58 2021
 
-@author: rpa
+@author: Roman Parys (romanowicz@protonmail.ch)
 """
 
 import sys
@@ -50,9 +50,13 @@ if __name__ == "__main__":
     to_tensor = torchvision.transforms.ToTensor()
     image_t = to_tensor(image_y)
     image_t = image_t.unsqueeze(0)
+    mean_luminance_original = torch.mean(image_t)
     image_t = model(image_t)
+    mean_luminance_processed = torch.mean(image_t)   
     
-    image_t = image_t / torch.max(image_t)
+    # normalize brightness
+    factor = mean_luminance_original / mean_luminance_processed
+    image_t = torch.clamp(image_t * factor, min=0.0, max=1.0)
     
     # assemble luminance and Cb, Cr channels
     to_image = torchvision.transforms.ToPILImage()

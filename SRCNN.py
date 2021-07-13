@@ -1,7 +1,7 @@
 """
 Created on Mon Jul 12 14:02:10 2021
 
-@author: rpa
+@author: Roman Parys (romanowicz@protonmail.ch)
 """
 
 # Super Resolution CNN network from
