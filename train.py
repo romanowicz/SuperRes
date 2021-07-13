@@ -59,8 +59,8 @@ def train(data_path, max_images, model_name):
     epoch_loss = 1e9
         
     for epoch in range(0, num_epochs):
+        
         prev_epoch_loss = epoch_loss
-
         current_state = model.state_dict()
         
         print("")
@@ -69,6 +69,7 @@ def train(data_path, max_images, model_name):
         epoch_loss = 0.0
         epoch_items = 0;
         current_loss = 0.0
+
         for i, data in enumerate(train_dataloader, 0):        
             inputs, targets = data
                 
@@ -78,8 +79,8 @@ def train(data_path, max_images, model_name):
             loss = loss_function(outputs, targets)
             loss.backward()
             optimizer.step()
-            current_loss += loss.item()
             
+            current_loss += loss.item()            
             epoch_loss += loss.item()
             epoch_items = epoch_items + 1
             
@@ -90,7 +91,6 @@ def train(data_path, max_images, model_name):
           
         epoch_loss = epoch_loss / epoch_items
         improvement = prev_epoch_loss / epoch_loss
-
         print("Epoch loss        : %.4f" % epoch_loss)
         print("Epoch improvement : %.4f" % improvement)
 
