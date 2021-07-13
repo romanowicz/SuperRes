@@ -18,7 +18,7 @@ import SRCNN
 
 
 batch_size = 128
-num_epochs = 8
+num_epochs = 10
 
 
 def train(data_path, max_images, model_name):
@@ -37,7 +37,6 @@ def train(data_path, max_images, model_name):
     ])
     
     # make dataset and loader
-    #dataset = SRCNNDataset.SRCNNDataset("", data_path, transform=transform, target_transform=target_transform)
     dataset = SRCNNDataset2.SRCNNDataset2("", data_path, max_images=max_images, transform=transform, target_transform=target_transform)
     train_dataloader = DataLoader(dataset, batch_size=batch_size)
     
@@ -47,8 +46,8 @@ def train(data_path, max_images, model_name):
         print("Shape of Y [N, C, H, W]: ", Y.shape, Y.dtype)
         break
     
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print('Using {} device'.format(device))
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Using {} device".format(device))
     
     model = SRCNN.SRCNN().to(device)
     print(model)
@@ -56,7 +55,19 @@ def train(data_path, max_images, model_name):
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     
+    prev_epoch_loss = 1e9
+    epoch_loss = 1e9
+        
     for epoch in range(0, num_epochs):
+        prev_epoch_loss = epoch_loss
+
+        current_state = model.state_dict()
+        
+        print("")
+        print("=============================================")
+        print("Starting epoch " + str(epoch))
+        epoch_loss = 0.0
+        epoch_items = 0;
         current_loss = 0.0
         for i, data in enumerate(train_dataloader, 0):        
             inputs, targets = data
@@ -68,15 +79,34 @@ def train(data_path, max_images, model_name):
             loss.backward()
             optimizer.step()
             current_loss += loss.item()
+            
+            epoch_loss += loss.item()
+            epoch_items = epoch_items + 1
+            
             if i % 500 == 499:
-              print('Loss after mini-batch %5d: %.3f' %
+              print("   -> Loss after mini-batch %5d: %.4f" %
                     (i + 1, current_loss / 500))
               current_loss = 0.0
-    
-    print('Training process has finished.')        
+          
+        epoch_loss = epoch_loss / epoch_items
+        improvement = prev_epoch_loss / epoch_loss
+
+        print("Epoch loss        : %.4f" % epoch_loss)
+        print("Epoch improvement : %.4f" % improvement)
+
+        # less than 3% improvement, terminating
+        if improvement < 1.03:
+            break;
+        
+        # save current state only if there is an improvement
+        if improvement > 1.0:
+            current_state = model.state_dict()
+               
+    print("")
+    print("Training process has finished.")
       
     # save model
-    torch.save(model.state_dict(), model_name)
+    torch.save(current_state, model_name)
 
 
 def usage():
