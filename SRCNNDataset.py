@@ -12,7 +12,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 
-IMG_WIDTH = 33
+TILE_SIZE = 33
 UPSCALING_FACTOR = 3
 
 
