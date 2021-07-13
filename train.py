@@ -13,7 +13,6 @@ import torchvision
 from torch.utils.data import DataLoader
 from torch import nn
 
-#import SRCNNDataset
 import SRCNNDataset2
 import SRCNN
 
@@ -25,7 +24,6 @@ num_epochs = 8
 def train(data_path, max_images, model_name):
 
     p = SRCNN.SRCNNParam()
-    #out_width = SRCNNDataset.TILE_SIZE - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
     out_width = SRCNNDataset2.TILE_SIZE - 2 * (int(p.f1 / 2) + int(p.f3 / 2))
     
     # define custom transform function
