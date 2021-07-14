@@ -18,7 +18,7 @@ UPSCALING_FACTOR = 3
 
 
 def usage():
-    print("usage: dump_layer_weights.py <model.pt>")
+    print("usage: dump_layer_weights.py <model.pt> <image.png>")
     sys.exit(0)
 
 
@@ -48,10 +48,11 @@ def get_weight_image(weight):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         usage()
 
     model_file = sys.argv[1]
+    image_file = sys.argv[2]
         
     # load neural network
     model = SRCNN.SRCNN()
@@ -64,4 +65,4 @@ if __name__ == "__main__":
     resize = torchvision.transforms.Resize((h * 8, w * 8), interpolation=torchvision.transforms.functional.InterpolationMode.NEAREST)
     image1 = resize(image1)
     
-    image1.save("weight.png")
+    image1.save(image_file)

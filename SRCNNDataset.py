@@ -8,7 +8,7 @@ import os
 import glob
 
 from PIL import Image
-#from PIL import ImageFilter
+from PIL import ImageFilter
 
 from torch.utils.data import Dataset
 import torchvision
