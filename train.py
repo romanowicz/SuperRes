@@ -61,13 +61,13 @@ def train(data_path, max_images, model_name):
             ])
     
     
-    torch.nn.init.normal_(model.conv1.weight, 0.0, 0.0001)
+    torch.nn.init.normal_(model.conv1.weight, 0.0, 0.001)
     torch.nn.init.constant_(model.conv1.bias, 0.0)
 
-    torch.nn.init.normal_(model.conv2.weight, 0.0, 0.0001)
+    torch.nn.init.normal_(model.conv2.weight, 0.0, 0.001)
     torch.nn.init.constant_(model.conv2.bias, 0.0)
 
-    torch.nn.init.normal_(model.conv3.weight, 0.0, 0.0001)
+    torch.nn.init.normal_(model.conv3.weight, 0.0, 0.001)
     torch.nn.init.constant_(model.conv3.bias, 0.0)
     
     prev_epoch_loss = 1e9
