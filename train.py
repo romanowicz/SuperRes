@@ -16,6 +16,7 @@ from torch import nn
 import SRCNNDataset
 import SRCNN
 
+from dump_layer_weights import get_weight_image
 
 batch_size = 128
 num_epochs = 10
@@ -61,14 +62,14 @@ def train(data_path, max_images, model_name):
             ])
     
     
-    torch.nn.init.normal_(model.conv1.weight, 0.0, 0.001)
+    torch.nn.init.normal_(model.conv1.weight, 0.0, 0.0001)
     torch.nn.init.constant_(model.conv1.bias, 0.0)
 
-    torch.nn.init.normal_(model.conv2.weight, 0.0, 0.001)
-    torch.nn.init.constant_(model.conv2.bias, 0.0)
+    #torch.nn.init.normal_(model.conv2.weight, 0.0, 0.001)
+    #torch.nn.init.constant_(model.conv2.bias, 0.0)
 
-    torch.nn.init.normal_(model.conv3.weight, 0.0, 0.001)
-    torch.nn.init.constant_(model.conv3.bias, 0.0)
+    #torch.nn.init.normal_(model.conv3.weight, 0.0, 0.001)
+    #torch.nn.init.constant_(model.conv3.bias, 0.0)
     
     prev_epoch_loss = 1e9
     epoch_loss = 1e9
@@ -113,6 +114,14 @@ def train(data_path, max_images, model_name):
         # save model after epoch
         model_name_epoch = "model_" + str(epoch) + ".pt"
         torch.save(current_state, model_name_epoch)
+
+        # save weights visualization
+        weight_name_epoch = "weight_" + str(epoch) + ".png"
+        im =  get_weight_image(model.conv1.weight)
+        w = im.width
+        h = im.height
+        resize8 = torchvision.transforms.Resize((h * 8, w * 8), interpolation=torchvision.transforms.functional.InterpolationMode.NEAREST)
+        resize8(im).save(weight_name_epoch)
 
         # less than 3% improvement, terminating
         if improvement < 1.01:
