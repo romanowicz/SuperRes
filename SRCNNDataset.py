@@ -26,7 +26,7 @@ class SRCNNDataset(Dataset):
     def downsample(self, img):
         w = img.size[0]
         h = img.size[1]    
-        #img = img.filter(ImageFilter.GaussianBlur(radius = 3))    
+        #img = img.filter(ImageFilter.GaussianBlur(radius = 2))    
         resize_down = torchvision.transforms.Resize((int(h / UPSCALING_FACTOR), int(w / UPSCALING_FACTOR)))
         resize_up = torchvision.transforms.Resize((h, w))
         img = resize_down(img)

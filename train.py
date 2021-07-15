@@ -54,22 +54,14 @@ def train(data_path, max_images, model_name):
     print(model)
     
     loss_function = nn.MSELoss()
-    #optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
-    optimizer = torch.optim.Adam([
-                {'params':model.conv1.parameters(), 'lr':1e-4},
-                {'params':model.conv2.parameters(), 'lr':1e-4},
-                {'params':model.conv3.parameters(), 'lr':1e-5},
-            ])
-    
-    
-    torch.nn.init.normal_(model.conv1.weight, 0.0, 0.0001)
-    torch.nn.init.constant_(model.conv1.bias, 0.0)
-
-    #torch.nn.init.normal_(model.conv2.weight, 0.0, 0.001)
-    #torch.nn.init.constant_(model.conv2.bias, 0.0)
-
-    #torch.nn.init.normal_(model.conv3.weight, 0.0, 0.001)
-    #torch.nn.init.constant_(model.conv3.bias, 0.0)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+#    optimizer = torch.optim.Adam([
+#                {'params':model.conv1.parameters(), 'lr':1e-4},
+#                {'params':model.conv2.parameters(), 'lr':1e-4},
+#                {'params':model.conv3.parameters(), 'lr':1e-5},
+#            ])       
+#   torch.nn.init.normal_(model.conv1.weight, 0.0, 0.0001)
+#   torch.nn.init.constant_(model.conv1.bias, 0.0)
     
     prev_epoch_loss = 1e9
     epoch_loss = 1e9

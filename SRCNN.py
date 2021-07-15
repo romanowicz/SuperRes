@@ -30,6 +30,8 @@ class SRCNN(torch.nn.Module):
         self.conv2 = torch.nn.Conv2d(p.n1, p.n2, kernel_size=p.f2, stride=1)
         self.relu2 = torch.nn.ReLU()
         self.conv3 = torch.nn.Conv2d(p.n2, p.c, kernel_size=p.f3, stride=1)
+        self.relu3 = torch.nn.ReLU()
+        self.tanh3 = torch.nn.Tanh()
 
     def forward(self, x):
         y = self.conv1(x)
@@ -37,4 +39,6 @@ class SRCNN(torch.nn.Module):
         y = self.conv2(y)
         y = self.relu2(y)
         y = self.conv3(y)        
+        y = self.relu3(y)        
+        y = self.tanh3(y)        
         return y

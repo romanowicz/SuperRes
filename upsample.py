@@ -9,6 +9,8 @@ Created on Mon Jul 12 14:53:58 2021
 import sys
 import torch
 import torchvision
+
+import matplotlib.pyplot as plot
 from PIL import Image
 
 import SRCNN
@@ -50,12 +52,19 @@ if __name__ == "__main__":
     to_tensor = torchvision.transforms.ToTensor()
     image_t = to_tensor(image_y)
     image_t = image_t.unsqueeze(0)
-    m_luminance_original = torch.median(image_t)
+    
+    o_median = torch.median(image_t)
+    o_min = torch.min(image_t)
+    o_max = torch.max(image_t)
+    
     image_t = model(image_t)
-    m_luminance_processed = torch.median(image_t)   
+    
+    t_min = torch.min(image_t)
+    t_max = torch.max(image_t)
+    t_median = torch.median(image_t)   
     
     # normalize brightness
-    factor = m_luminance_original / m_luminance_processed
+    factor = o_median / t_median
     image_t = torch.clamp(image_t * factor, min=0.0, max=1.0)
     
     # assemble luminance and Cb, Cr channels
@@ -67,4 +76,3 @@ if __name__ == "__main__":
     #convert to RGB and save
     image = image_ycrcb.convert('RGB')
     image.save(output_image)
-        
