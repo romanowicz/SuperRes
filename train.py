@@ -117,11 +117,8 @@ def train(data_path, max_images, model_name):
 
         # save weights visualization
         weight_name_epoch = "weight_" + str(epoch) + ".png"
-        im =  get_weight_image(model.conv1.weight)
-        w = im.width
-        h = im.height
-        resize8 = torchvision.transforms.Resize((h * 8, w * 8), interpolation=torchvision.transforms.functional.InterpolationMode.NEAREST)
-        resize8(im).save(weight_name_epoch)
+        im = get_weight_image(model.conv1.weight)
+        im.save(weight_name_epoch)
 
         # less than 3% improvement, terminating
         if improvement < 1.01:

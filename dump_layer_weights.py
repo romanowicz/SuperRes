@@ -43,8 +43,11 @@ def get_weight_image(weight):
         im = to_image(t1)
         im.copy()
         image.paste(im, (u * w, v * h))
-    
-    return image
+
+    w = image.width
+    h = image.height
+    resize8 = torchvision.transforms.Resize((h * 8, w * 8), interpolation=torchvision.transforms.functional.InterpolationMode.NEAREST)
+    return resize8(image)    
 
 
 if __name__ == "__main__":
