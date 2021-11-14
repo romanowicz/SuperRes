@@ -8,10 +8,10 @@ The prerequisites to run the upsample.py script are python 3.8, pytorch 1.9.0+cu
 Some examples:
 
 Original image upsampled with linear interpolation:
-![linear interpolation](https://github.com/romanowicz/SuperRes-Demo/blob/master/output/waterfall_lr_linear.jpg?raw=true)
+![linear interpolation](https://github.com/romanowicz/SuperRes/blob/master/output/waterfall_lr_linear.jpg?raw=true)
 
 Super-resolved version:
-![linear interpolation](https://github.com/romanowicz/SuperRes-Demo/blob/master/output/waterfall_lr_srcnn_3.jpg?raw=true)
+![linear interpolation](https://github.com/romanowicz/SuperRes/blob/master/output/waterfall_lr_srcnn_3.jpg?raw=true)
 
 Other examples can be found in the repository, in the 'output' subdirectory.
 
